@@ -37,3 +37,18 @@ Scripts for different usages are provided in the repository
 
 ## Step5
 Schedule the Runbook. While scheduling the Runbook, you can pass on the parameters required for the PowerShell Script. You can use '-?' to see the needed parameters for each script.
+
+### Example Usage
+
+#### Example 1: Fetch archivable recovery points for a backup item
+
+ $ArchivableRecoveryPoints = .\viewArchivableRPs.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx -ResourceGroupName "ResourceGroupName" -VaultName "VaultName" -ItemType "MSSQL/AzureVM" -BackupItemName $item[2].Name -StartDate (Get-Date).AddDays(-165).ToUniversalTime() -EndDate (Get-date).AddDays(0).ToUniversalTime()
+
+#### Example 2: Fetch archivable recovery points for a backup item
+
+ $MoveJobsSQL = .\moveArchivableRecoveryPointsForSQL.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx -ResourceGroupName "ResourceGroupName" -VaultName "VaultName" -BackupItemName $item[2].Name -StartDate (Get-Date).AddDays(-165).ToUniversalTime() -EndDate (Get-date).AddDays(0).ToUniversalTime()
+
+#### Example 2: Fetch archivable recovery points for a backup item
+
+ $MoveJobsIaasVM = .\moveRecommendedRPsForIaasVM.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx -ResourceGroupName "ResourceGroupName" -VaultName "VaultName" -BackupItemName $vmItem.Name
+
