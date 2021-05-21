@@ -12,43 +12,126 @@ description: "Automates top asks using PowerShell for Azure Backup archive featu
 Automate archive move using [PowerShell for Azure Backup](https://docs.microsoft.com/en-us/azure/backup/archive-tier-support)
 
 ## Features
-
 Runbooks for Archive move
 
-## Step1
-Create an Automation resource with “Run As” account
+## Sample Scripts 
 
-## Step2
-Import modules from Gallery in the Automation resource
+1. Run Latest Version of Powershell in administrator mode 
+2. Run the following command to set the execution policy 
+3. Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process 
 
-Import the following modules from the Modules gallery:
-1. Az.RecoveryServices 4.0.0-preview 
+Download and Run the sample scripts. 
+ 
+## View Archivable Points 
 
-## Step3
-Create PowerShell Runbooks in the Automation Resource. You can create multiple Runbooks based on which set of RPs you want to move
+### Location
 
-## Step4
-Edit the Runbook and write script to choose BackupItem for archive move. You can create scripts that suit your requirements.
-- Save the script
-- Test the script using “Test Pane”
-- Publish the Runbook
+Download [viewArchivableRPs](https://github.com/hiaga/Az.RecoveryServices/tree/master/ArchiveFeatureSupport)
 
-Scripts for different usages are provided in the repository
+### Purpose 
 
-## Step5
-Schedule the Runbook. While scheduling the Runbook, you can pass on the parameters required for the PowerShell Script. You can use '-?' to see the needed parameters for each script.
+This sample script is used to view all the archivable recovery points associated with a backup item between any time range. 
 
-### Example Usage
+### Input Parameters  
 
-#### Example 1: Fetch archivable recovery points for a backup item
+1. Subscription 
+2. ResourceGroupName 
+3. VaultName 
+4. ItemType – {AzureVM,MSSQL) 
+5. StartDate = (Get-Date).AddDays(-x).ToUniversalTime()  
+6. EndDate = (Get-Date).AddDays(-y).ToUniversalTime() 
+7. BackupItem  
 
- $ArchivableRecoveryPoints = .\viewArchivableRPs.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx -ResourceGroupName "ResourceGroupName" -VaultName "VaultName" -ItemType "MSSQL/AzureVM" -BackupItemName $item[2].Name -StartDate (Get-Date).AddDays(-165).ToUniversalTime() -EndDate (Get-date).AddDays(0).ToUniversalTime()
+Where x and y are the time-range between which you want to move the recovery points. 
 
-#### Example 2: Fetch archivable recovery points for a backup item
+#### The $BackupItem can be found out using 
+1. For Azure Virtual Machines 
 
- $MoveJobsSQL = .\moveArchivableRecoveryPointsForSQL.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx -ResourceGroupName "ResourceGroupName" -VaultName "VaultName" -BackupItemName $item[2].Name -StartDate (Get-Date).AddDays(-165).ToUniversalTime() -EndDate (Get-date).AddDays(0).ToUniversalTime()
+    $BackupItemList = Get-AzRecoveryServicesBackupItem -vaultId $vault.ID -BackupManagementType "AzureVM" -WorkloadType "AzureVM" 
 
-#### Example 2: Fetch archivable recovery points for a backup item
+2. For SQL Server in Azure Virtual Machines 
 
- $MoveJobsIaasVM = .\moveRecommendedRPsForIaasVM.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx -ResourceGroupName "ResourceGroupName" -VaultName "VaultName" -BackupItemName $vmItem.Name
+    $BackupItemList = Get-AzRecoveryServicesBackupItem -vaultId $vault.ID -BackupManagementType "AzureWorkload" -WorkloadType "MSSQL" 
 
+### Output 
+
+A list of archivable recovery point 
+ 
+
+### Example Usage 
+
+$ArchivableRecoveryPoints = .\viewArchivableRPs.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx -ResourceGroupName "ResourceGroupName" -VaultName "VaultName" -ItemType "MSSQL/AzureVM" -BackupItem $BackupItemList[2] -StartDate (Get-Date).AddDays(-165).ToUniversalTime() -EndDate (Get-date).AddDays(0).ToUniversalTime() 
+
+ 
+
+## Move all Archivable recovery point for a SQL Server in Azure VM 
+
+### Location 
+Download [moveArchivableRecoveryPointsForSQL](https://github.com/hiaga/Az.RecoveryServices/tree/master/ArchiveFeatureSupport)
+
+### Purpose
+
+This sample script moves all the archivable recovery point for a particular SQL Backup Item to archive. 
+ 
+
+### Input Parameters 
+
+1. Subscription 
+2. ResourceGroupName 
+3. VaultName 
+4. BackupItem
+5. StartDate (Get-Date).AddDays(-x).ToUniversalTime() 
+6. EndDate (Get-date).AddDays(-y).ToUniversalTime() 
+
+Where x and y are the time-range between which you want to move the recovery points. 
+
+#### The $BackupItem can be found out using 
+
+1. For SQL Server in Azure Virtual Machines 
+
+    $BackupItemList = Get-AzRecoveryServicesBackupItem -vaultId $vault.ID -BackupManagementType "AzureWorkload" -WorkloadType "MSSQL" 
+
+ 
+### Output 
+
+A list of move jobs initiated for each recovery point being moved to archive. 
+ 
+
+### Example Usage 
+
+$MoveJobsSQL = .\moveArchivableRecoveryPointsForSQL.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx -ResourceGroupName "ResourceGroupName" -VaultName "VaultName" -BackupItem $item[2] -StartDate (Get-Date).AddDays(-165).ToUniversalTime() -EndDate (Get-date).AddDays(0).ToUniversalTime() 
+
+ 
+
+## Move all recommended recovery points to archive for a Virtual Machine workload 
+
+### Location 
+
+Download [moveRecommendedRPsForIaasVM](https://github.com/hiaga/Az.RecoveryServices/tree/master/ArchiveFeatureSupport)
+
+
+### Purpose
+
+Move all the recommended recovery points to archive for a particular Virtual Machine workload. 
+
+### Input Parameters 
+
+1. Subscription 
+2. ResourceGroupName 
+3. VaultName 
+4. BackupItem
+
+ 
+#### The BackupItem can be found out from the list 
+
+1. For Azure Virtual Machines 
+
+    $BackupItemList = Get-AzRecoveryServicesBackupItem -vaultId $vault.ID -BackupManagementType "AzureVM" -WorkloadType "AzureVM" 
+
+### Output 
+
+A list of move jobs initiated for each recovery point being moved to archive 
+
+### Example Usage 
+
+$MoveJobsIaasVM = .\moveRecommendedRPsForIaasVM.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx -ResourceGroupName "ResourceGroupName" -VaultName "VaultName" -BackupItem $vmItem 

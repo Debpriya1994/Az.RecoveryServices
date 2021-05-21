@@ -24,7 +24,7 @@ param(
     [System.DateTime] $EndDate = (Get-Date).AddDays(0).ToUniversalTime(),
     
     [Parameter(Mandatory=$true, HelpMessage="Name of Backup Item")] 
-    [string] $BackupItemName
+    [Microsoft.Azure.Commands.RecoveryServices.Backup.Cmdlets.Models.ItemBase] $BackupItem
 )
 
 function script:TraceMessage([string] $message, [string] $color="Yellow")
@@ -44,34 +44,27 @@ catch
 
 #fetch recovery services vault  
 $vault =  Get-AzRecoveryServicesVault -ResourceGroupName $ResourceGroupName -Name $VaultName
-    
-# fetch SQL backup item within the vault
-$sqlItems = Get-AzRecoveryServicesBackupItem -BackupManagementType "AzureWorkload" `
-    -WorkloadType "MSSQL" -VaultId $vault.ID | Where-Object { $_.Name -eq $BackupItemName}
 
 # for each sql item - move all move-ready recovery points (wihin given time range) to Archive
-foreach ($sqlItem in $sqlItems){
+$EndDate1 = $EndDate
+while ($EndDate1 -ge $StartDate) {
+    $timeDiff = ($EndDate1 - $StartDate)
 
-    $EndDate1 = $EndDate
-    while ($EndDate1 -ge $StartDate) {
-        $timeDiff = ($EndDate1 - $StartDate)
+    if($timeDiff.Days -ge 30){
+        $StartDate1 = $EndDate1.AddDays(-30).ToUniversalTime()
+    }
+    else {
+        $StartDate1 = $StartDate
+    }
+
+    $archivableSQLRPs = Get-AzRecoveryServicesBackupRecoveryPoint -Item $BackupItem `
+    -StartDate $StartDate1 -EndDate $EndDate1 -VaultId $vault.ID -IsReadyForMove $true `
+    -TargetTier VaultArchive
+
+    $allRecoveryPoints = $allRecoveryPoints + $archivableSQLRPs 
     
-        if($timeDiff.Days -ge 30){
-            $StartDate1 = $EndDate1.AddDays(-30).ToUniversalTime()
-        }
-        else {
-            $StartDate1 = $StartDate
-        }
-
-        $archivableSQLRPs = Get-AzRecoveryServicesBackupRecoveryPoint -Item $sqlItem `
-        -StartDate $StartDate1 -EndDate $EndDate1 -VaultId $vault.ID -IsReadyForMove $true `
-        -TargetTier VaultArchive
-
-        $allRecoveryPoints = $allRecoveryPoints + $archivableSQLRPs 
-        
-        $EndDate1 = $EndDate1.AddDays(-30).ToUniversalTime() 
-    }                     
-}
+    $EndDate1 = $EndDate1.AddDays(-30).ToUniversalTime() 
+}       
 
 # for each sql item - move all move-ready recovery points (wihin given time range) to Archive
 $result = @()
