@@ -17,10 +17,9 @@ Runbooks for Archive move
 ## Sample Scripts 
 
 1. Run Latest Version of Powershell in administrator mode 
-2. Run the following command to set the execution policy 
-3. Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process 
-
-Download and Run the sample scripts. 
+2. Run the following command to set the execution policy
+     a. Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process 
+3. Download and Run the sample scripts. 
  
 ## View Archivable Points 
 
@@ -99,7 +98,7 @@ A list of move jobs initiated for each recovery point being moved to archive.
 
 ### Example Usage 
 
-$MoveJobsSQL = .\moveArchivableRecoveryPointsForSQL.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx -ResourceGroupName "ResourceGroupName" -VaultName "VaultName" -BackupItem $item[2] -StartDate (Get-Date).AddDays(-165).ToUniversalTime() -EndDate (Get-date).AddDays(0).ToUniversalTime() 
+$MoveJobsSQL = .\moveArchivableRecoveryPointsForSQL.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx -ResourceGroupName "ResourceGroupName" -VaultName "VaultName" -BackupItem $BackupItemList[2] -StartDate (Get-Date).AddDays(-165).ToUniversalTime() -EndDate (Get-date).AddDays(0).ToUniversalTime() 
 
  
 
@@ -134,4 +133,4 @@ A list of move jobs initiated for each recovery point being moved to archive
 
 ### Example Usage 
 
-$MoveJobsIaasVM = .\moveRecommendedRPsForIaasVM.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx -ResourceGroupName "ResourceGroupName" -VaultName "VaultName" -BackupItem $vmItem 
+$MoveJobsIaasVM = .\moveRecommendedRPsForIaasVM.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx -ResourceGroupName "ResourceGroupName" -VaultName "VaultName" -BackupItem $BackupItemList[2] 
