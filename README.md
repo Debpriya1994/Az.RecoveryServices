@@ -18,6 +18,7 @@ Runbooks for Archive move
 
 1. Run Latest Version of Powershell in administrator mode 
 2. Run the following command to set the execution policy
+
      a. Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process 
 3. Download and Run the sample scripts. 
  
