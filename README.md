@@ -9,24 +9,35 @@ description: "Automates top asks using PowerShell for Azure Backup archive featu
 
 # Automate top asks using PowerShell for Azure Backup
 
-Automate archive move using [PowerShell for Azure Backup](https://docs.microsoft.com/en-us/azure/backup/archive-tier-support)
+Automate archive move using [PowerShell for Azure Backup](https://docs.microsoft.com/en-us/azure/backup/archive-tier-support#get-started-with-powershell)
 
 ## Features
 Runbooks for Archive move
 
 ## Sample Scripts 
 
-1. Run Latest Version of Powershell in administrator mode 
-2. Run the following command to set the execution policy
+1. Run Latest Version of [Powershell](https://github.com/PowerShell/PowerShell/releases/download/v7.1.3/PowerShell-7.1.3-win-x64.msi) in administrator mode 
+
+2. Run the following command to set the execution policy (this allows permission for scripts to be run)
 
      a. Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process 
-3. Download and Run the sample scripts. 
+
+3. Use the following commands for installation and setup
+        Cd <Location of the script>
+	    install-module -name Az.RecoveryServices -Repository PSGallery -RequiredVersion 4.0.0-preview -AllowPrerelease -force
+
+4. Connect to Azure using the Connect-AzAccount cmdlet.
+	    Sign into your subscription:
+	    Set-AzContext -Subscription "SubscriptionName"
+        
+5. Download and run the scripts
+ 
  
 ## View Archivable Points 
 
 ### Location
 
-Download [viewArchivableRPs](https://github.com/hiaga/Az.RecoveryServices/tree/master/ArchiveFeatureSupport)
+Download [viewArchivableRPs](https://github.com/hiaga/Az.RecoveryServices/blob/master/ArchiveFeatureSupport/viewArchivableRPs.ps1)
 
 ### Purpose 
 
@@ -62,12 +73,11 @@ A list of archivable recovery point
 
 $ArchivableRecoveryPoints = .\viewArchivableRPs.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx -ResourceGroupName "ResourceGroupName" -VaultName "VaultName" -ItemType "MSSQL/AzureVM" -BackupItem $BackupItemList[2] -StartDate (Get-Date).AddDays(-165).ToUniversalTime() -EndDate (Get-date).AddDays(0).ToUniversalTime() 
 
- 
 
 ## Move all Archivable recovery point for a SQL Server in Azure VM 
 
 ### Location 
-Download [moveArchivableRecoveryPointsForSQL](https://github.com/hiaga/Az.RecoveryServices/tree/master/ArchiveFeatureSupport)
+Download [moveArchivableRecoveryPointsForSQL](https://github.com/hiaga/Az.RecoveryServices/blob/master/ArchiveFeatureSupport/moveArchivableRecoveryPointsForSQL.ps1)
 
 ### Purpose
 
@@ -107,7 +117,7 @@ $MoveJobsSQL = .\moveArchivableRecoveryPointsForSQL.ps1 -Subscription xxxxxxxx-x
 
 ### Location 
 
-Download [moveRecommendedRPsForIaasVM](https://github.com/hiaga/Az.RecoveryServices/tree/master/ArchiveFeatureSupport)
+Download [moveRecommendedRPsForIaasVM](https://github.com/hiaga/Az.RecoveryServices/blob/master/ArchiveFeatureSupport/moveRecommendedRPsForIaasVM.ps1)
 
 
 ### Purpose
