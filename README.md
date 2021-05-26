@@ -20,7 +20,7 @@ Runbooks for Archive move
 
 2. Run the following command to set the execution policy (this allows permission for scripts to be run)
 
-     a. Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process 
+        a. Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process 
 
 3. Use the following commands for installation and setup
 
