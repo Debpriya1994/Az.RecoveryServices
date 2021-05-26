@@ -20,13 +20,13 @@ Runbooks for Archive move
 
 2. Run the following command to set the execution policy (this allows permission for scripts to be run)
 
-        a. Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process 
+        Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process 
 
 3. Use the following commands for installation and setup
 
-        a. cd <Location of the script> 
+        cd <Location of the script> 
 
-        b. install-module -name Az.RecoveryServices -Repository PSGallery -RequiredVersion 4.0.0-preview -AllowPrerelease -force
+        install-module -name Az.RecoveryServices -Repository PSGallery -RequiredVersion 4.0.0-preview -AllowPrerelease -force
 
 4. Connect to Azure using the "Connect-AzAccount" cmdlet.
 
