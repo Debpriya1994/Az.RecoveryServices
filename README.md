@@ -28,11 +28,13 @@ Runbooks for Archive move
 
         b. install-module -name Az.RecoveryServices -Repository PSGallery -RequiredVersion 4.0.0-preview -AllowPrerelease -force
 
-4. Connect to Azure using the Connect-AzAccount cmdlet.
-	    Sign into your subscription:
-	    Set-AzContext -Subscription "SubscriptionName"
+4. Connect to Azure using the "Connect-AzAccount" cmdlet.
+
+5. Sign into your subscription:
+
+ 	    Set-AzContext -Subscription "SubscriptionName"
         
-5. Download and run the scripts
+6. Download and run the scripts
  
  
 ## View Archivable Points 
