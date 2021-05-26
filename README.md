@@ -22,19 +22,21 @@ Runbooks for Archive move
 
         Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process 
 
-3. Use the following commands for installation and setup
+3. Download the scripts
+
+4. Use the following commands for installation and setup
 
         cd <Location of the script> 
 
         install-module -name Az.RecoveryServices -Repository PSGallery -RequiredVersion 4.0.0-preview -AllowPrerelease -force
 
-4. Connect to Azure using the "Connect-AzAccount" cmdlet.
+5. Connect to Azure using the "Connect-AzAccount" cmdlet.
 
-5. Sign into your subscription:
+6. Sign into your subscription:
 
  	    Set-AzContext -Subscription "SubscriptionName"
         
-6. Download and run the scripts
+7. Run the scripts
  
  
 ## View Archivable Points 
