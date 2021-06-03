@@ -57,18 +57,11 @@ This sample script is used to view all the archivable recovery points associated
 4. ItemType – {AzureVM,MSSQL) 
 5. StartDate = (Get-Date).AddDays(-x).ToUniversalTime()  
 6. EndDate = (Get-Date).AddDays(-y).ToUniversalTime() 
-7. BackupItem  
+7. VMName
+8. DBName(Only for SQL DB)  
 
 Where x and y are the time-range between which you want to move the recovery points. 
 
-#### The $BackupItem can be found out using 
-1. For Azure Virtual Machines 
-
-    $BackupItemList = Get-AzRecoveryServicesBackupItem -vaultId $vault.ID -BackupManagementType "AzureVM" -WorkloadType "AzureVM" 
-
-2. For SQL Server in Azure Virtual Machines 
-
-    $BackupItemList = Get-AzRecoveryServicesBackupItem -vaultId $vault.ID -BackupManagementType "AzureWorkload" -WorkloadType "MSSQL" 
 
 ### Output 
 
@@ -77,7 +70,7 @@ A list of archivable recovery point
 
 ### Example Usage 
 
-$ArchivableRecoveryPoints = .\viewArchivableRPs.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx -ResourceGroupName "ResourceGroupName" -VaultName "VaultName" -ItemType "MSSQL/AzureVM" -BackupItem $BackupItemList[2] -StartDate (Get-Date).AddDays(-165).ToUniversalTime() -EndDate (Get-date).AddDays(0).ToUniversalTime() 
+$ArchivableRecoveryPoints = .\viewArchivableRPs.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx -ResourceGroupName "ResourceGroupName" -VaultName "VaultName" -ItemType "MSSQL/AzureVM" -VMName "VMName" -DBName "DBName" -StartDate (Get-Date).AddDays(-165).ToUniversalTime() -EndDate (Get-date).AddDays(0).ToUniversalTime() 
 
 
 ## Move all Archivable recovery point for a SQL Server in Azure VM 
@@ -95,17 +88,12 @@ This sample script moves all the archivable recovery point for a particular SQL 
 1. Subscription 
 2. ResourceGroupName 
 3. VaultName 
-4. BackupItem
-5. StartDate (Get-Date).AddDays(-x).ToUniversalTime() 
-6. EndDate (Get-date).AddDays(-y).ToUniversalTime() 
+4. VMName
+5. DBName
+6. StartDate (Get-Date).AddDays(-x).ToUniversalTime() 
+7. EndDate (Get-date).AddDays(-y).ToUniversalTime() 
 
 Where x and y are the time-range between which you want to move the recovery points. 
-
-#### The $BackupItem can be found out using 
-
-1. For SQL Server in Azure Virtual Machines 
-
-    $BackupItemList = Get-AzRecoveryServicesBackupItem -vaultId $vault.ID -BackupManagementType "AzureWorkload" -WorkloadType "MSSQL" 
 
  
 ### Output 
@@ -115,7 +103,7 @@ A list of move jobs initiated for each recovery point being moved to archive.
 
 ### Example Usage 
 
-$MoveJobsSQL = .\moveArchivableRecoveryPointsForSQL.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx -ResourceGroupName "ResourceGroupName" -VaultName "VaultName" -BackupItem $BackupItemList[2] -StartDate (Get-Date).AddDays(-165).ToUniversalTime() -EndDate (Get-date).AddDays(0).ToUniversalTime() 
+$MoveJobsSQL = .\moveArchivableRecoveryPointsForSQL.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx -ResourceGroupName "ResourceGroupName" -VaultName "VaultName" -VMName "VMName" -DBName "DBName" -StartDate (Get-Date).AddDays(-165).ToUniversalTime() -EndDate (Get-date).AddDays(0).ToUniversalTime() 
 
  
 
@@ -135,14 +123,8 @@ Move all the recommended recovery points to archive for a particular Virtual Mac
 1. Subscription 
 2. ResourceGroupName 
 3. VaultName 
-4. BackupItem
+4. VMName
 
- 
-#### The BackupItem can be found out from the list 
-
-1. For Azure Virtual Machines 
-
-    $BackupItemList = Get-AzRecoveryServicesBackupItem -vaultId $vault.ID -BackupManagementType "AzureVM" -WorkloadType "AzureVM" 
 
 ### Output 
 
@@ -150,4 +132,4 @@ A list of move jobs initiated for each recovery point being moved to archive
 
 ### Example Usage 
 
-$MoveJobsIaasVM = .\moveRecommendedRPsForIaasVM.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx -ResourceGroupName "ResourceGroupName" -VaultName "VaultName" -BackupItem $BackupItemList[2] 
+$MoveJobsIaasVM = .\moveRecommendedRPsForIaasVM.ps1 -Subscription xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx -ResourceGroupName "ResourceGroupName" -VaultName "VaultName" -VMName "VMName"
