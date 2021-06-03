@@ -26,8 +26,12 @@ param(
     [Parameter(Mandatory=$false, HelpMessage="End Date in Utc")] 
     [System.DateTime] $EndDate = (Get-Date).AddDays(0).ToUniversalTime(),
     
-    [Parameter(Mandatory=$true, HelpMessage="Name of Backup Item")] 
-    [Microsoft.Azure.Commands.RecoveryServices.Backup.Cmdlets.Models.ItemBase] $BackupItem
+    [Parameter(Mandatory=$true, HelpMessage="Name of Virtual Machine")] 
+    [String] $VMName,
+
+    [Parameter(Mandatory=$false, HelpMessage="Name of DB Item")] 
+    [String] $DBName
+
 )
 
 function script:TraceMessage([string] $message, [string] $color="Yellow")
@@ -52,7 +56,9 @@ $vault =  Get-AzRecoveryServicesVault -ResourceGroupName $ResourceGroupName -Nam
     
 if($ItemType -eq "AzureVM"){
     # for vm item - move all recommended RPs to Archive    
-    $EndDate1 = $EndDate            
+    $EndDate1 = $EndDate    
+    $BackupItemList = Get-AzRecoveryServicesBackupItem -vaultId $vault.ID -BackupManagementType "AzureVM" -WorkloadType "AzureVM"
+    $bckItm = $BackupItemList | Where-Object {$_.Name -match $VMName}        
     while ($EndDate1 -ge $StartDate) {
         $timeDiff = ($EndDate1 - $StartDate)
     
@@ -63,7 +69,7 @@ if($ItemType -eq "AzureVM"){
             $StartDate1 = $StartDate
         }
 
-        $archivableVMRPs = Get-AzRecoveryServicesBackupRecoveryPoint -Item $BackupItem `
+        $archivableVMRPs = Get-AzRecoveryServicesBackupRecoveryPoint -Item $bckItm `
         -StartDate $StartDate1 -EndDate $EndDate1 -VaultId $vault.ID -IsReadyForMove $true `
         -TargetTier VaultArchive
 
@@ -75,6 +81,8 @@ if($ItemType -eq "AzureVM"){
 elseif ($ItemType -eq "MSSQL") {    
     # for sql item - move all move-ready recovery points (wihin given time range) to Archive
     $EndDate1 = $EndDate
+    $BackupItemList = Get-AzRecoveryServicesBackupItem -vaultId $vault.ID -BackupManagementType "AzureWorkload" -WorkloadType "MSSQL"
+    $bckItm = $BackupItemList | Where-Object {$_.Name -match $DBName -and $_.ContainerName -match $VMName}
     while ($EndDate1 -ge $StartDate) {
         $timeDiff = ($EndDate1 - $StartDate)
     
@@ -85,7 +93,7 @@ elseif ($ItemType -eq "MSSQL") {
             $StartDate1 = $StartDate
         }
 
-        $archivableSQLRPs = Get-AzRecoveryServicesBackupRecoveryPoint -Item $BackupItem `
+        $archivableSQLRPs = Get-AzRecoveryServicesBackupRecoveryPoint -Item $bckItm `
         -StartDate $StartDate1 -EndDate $EndDate1 -VaultId $vault.ID -IsReadyForMove $true `
         -TargetTier VaultArchive
         
