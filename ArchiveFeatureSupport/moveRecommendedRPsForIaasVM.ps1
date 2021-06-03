@@ -17,7 +17,7 @@ param(
     [string] $VaultName,
     
     [Parameter(Mandatory=$true, HelpMessage="Name of Backup Item")] 
-    [Microsoft.Azure.Commands.RecoveryServices.Backup.Cmdlets.Models.ItemBase] $BackupItem
+    [String] $VMName
 )
 
 function script:TraceMessage([string] $message, [string] $color="Yellow")
@@ -39,9 +39,12 @@ catch
 $vault =  Get-AzRecoveryServicesVault -ResourceGroupName $ResourceGroupName -Name $VaultName
 
 $result = @()    
-# for each vm item - move all recommended RPs to Archive
 
-$recRPList = Get-AzRecoveryServicesBackupRecommendedArchivableRPGroup -Item $BackupItem -VaultId $vault.ID
+$BackupItemList = Get-AzRecoveryServicesBackupItem -vaultId $vault.ID -BackupManagementType "AzureVM" -WorkloadType "AzureVM"
+$bckItm = $BackupItemList | Where-Object {$_.Name -match $VMName}
+
+# for each vm item - move all recommended RPs to Archive
+$recRPList = Get-AzRecoveryServicesBackupRecommendedArchivableRPGroup -Item $bckItm -VaultId $vault.ID
 
 foreach ($rp in $recRPList){
     $job = Move-AzRecoveryServicesBackupRecoveryPoint -RecoveryPoint $rp `
