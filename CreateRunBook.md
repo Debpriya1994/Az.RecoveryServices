@@ -16,7 +16,7 @@ Runbooks for Archive move
 
 1. Create an [Automation Account](https://ms.portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/Microsoft.Automation%2FAutomationAccounts) in Azure Portal
 2. Import Az.RecoveryServices 4.0.0-preview module from [Powershell Gallery](https://www.powershellgallery.com/packages/Az.RecoveryServices/4.0.0-preview)
-    a.  Deploy to Azure Automation and select the Automation account and resource group.
+       a.  Deploy to Azure Automation and select the Automation account and resource group.
 3. Click on Runbooks in Policy Automation from the automation account.
 4. Import a runbook.
 5. To create the runbook - download the scripts and then import them to your runbook.
