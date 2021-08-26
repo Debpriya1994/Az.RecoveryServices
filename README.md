@@ -28,7 +28,7 @@ Runbooks for Archive move
 
         cd <Location of the script> 
 
-        install-module -name Az.RecoveryServices -Repository PSGallery -RequiredVersion 4.0.0-preview -AllowPrerelease -force
+        install-module -name Az.RecoveryServices -Repository PSGallery -AllowClobber -Force
 
 5. Connect to Azure using the "Connect-AzAccount" cmdlet.
        
