@@ -50,7 +50,7 @@ catch
 $vault =  Get-AzRecoveryServicesVault -ResourceGroupName $ResourceGroupName -Name $VaultName
 
 $BackupItemList = Get-AzRecoveryServicesBackupItem -vaultId $vault.ID -BackupManagementType "AzureWorkload" -WorkloadType "MSSQL"
-$bckItm = $BackupItemList | Where-Object {$_.Name -eq $DBName -and $_.ContainerName -eq $VMName}
+$bckItm = $BackupItemList | Where-Object {$_.FriendlyName -eq $DBName -and $_.ContainerName -match $VMName}
 # for each sql item - move all move-ready recovery points (wihin given time range) to Archive
 $EndDate1 = $EndDate
 while ($EndDate1 -ge $StartDate) {
