@@ -23,8 +23,9 @@ param(
     [Parameter(Mandatory=$false, HelpMessage="End Date in Utc")] 
     [System.DateTime] $EndDate = (Get-Date).AddDays(0).ToUniversalTime(),
     
-    [Parameter(Mandatory=$true, HelpMessage="Name of Virtual Machine")] 
+    [Parameter(Mandatory=$true, HelpMessage="Name of SQL Server")] 
     [String] $ServerName
+    
 )
 
 function script:TraceMessage([string] $message, [string] $color="Yellow")
@@ -43,24 +44,27 @@ catch
 }
 
 #fetch recovery services vault  
+$result = @()
 $vault =  Get-AzRecoveryServicesVault -ResourceGroupName $ResourceGroupName -Name $VaultName
 
 $BackupItemList = Get-AzRecoveryServicesBackupItem -vaultId $vault.ID -BackupManagementType "AzureWorkload" -WorkloadType "MSSQL"
-$bckItm = $BackupItemList | Where-Object {$_.ServerName -q $ServerName}
+$bckItm = $BackupItemList | Where-Object {$_.ServerName -eq $ServerName}
 
 # for each sql item - move all move-ready recovery points (wihin given time range) to Archive
 foreach ($item in $bckItm){
     $archivableSQLRPs = Get-AzRecoveryServicesBackupRecoveryPoint -Item $item -StartDate $StartDate -EndDate $EndDate -VaultId $vault.ID -IsReadyForMove $true -TargetTier VaultArchive
 
     if(!($null -eq $archivableSQLRPs)){
-        $result = @()
+        
         foreach ($rp in $archivableSQLRPs){
             $job = Move-AzRecoveryServicesBackupRecoveryPoint -RecoveryPoint $rp `
                 -SourceTier VaultStandard -DestinationTier VaultArchive -VaultId $vault.ID
-            
+                            
             $result = $result + $job
         }
         
-        Write-Output($result)  
+          
     }
 }
+
+Write-Output($result)
